@@ -11,7 +11,7 @@ mixer.music.play(-1)
 
 run = True
 scoreValue = 0
-speed = 1
+speed = 0.2  # change the starting speed as per your need
 vehiclesOnScreen = 2
 
 background = pygame.image.load('background.png')
@@ -74,24 +74,26 @@ def progress():  # increasing difficulty as the game progresses
     global speed, vehiclesOnScreen
 
     if scoreValue <= 20:
-        speed = 1
+        speed = speed
     elif scoreValue <= 60:
         vehiclesOnScreen = 3
     elif scoreValue <= 100:
-        speed = 1.5
+        speed = 1.5 * speed
     elif scoreValue <= 150:
-        speed = 2
+        speed = (speed / 1.5) * 2
     elif scoreValue <= 250:
         vehiclesOnScreen = 4
     else:
-        speed = 2.5
+        speed = (speed / 2) * 2.5
 
 
 def crash():  # to be called once a car crashes with another car
-    gameOverScreen = pygame.display.set_mode((600, 600))  # initialising a new screen
+    gameOverScreen = pygame.display.set_mode(
+        (600, 600))  # initialising a new screen
 
     totalScoreFont = pygame.font.Font('freesansbold.ttf', 64)
-    totalScore = totalScoreFont.render("Score : " + str(scoreValue), True, (255, 255, 255))
+    totalScore = totalScoreFont.render(
+        "Score : " + str(scoreValue), True, (255, 255, 255))
     gameOverFont = pygame.font.Font('freesansbold.ttf', 64)
     gameOver = gameOverFont.render("GAME OVER", True, (255, 255, 255))
     mixer.music.load("gameOverSound.mp3")
@@ -116,7 +118,8 @@ while run:
 
     screen.blit(background, (0, 0))
 
-    score = scoreFont.render("Score : " + str(scoreValue), True, (255, 255, 255))
+    score = scoreFont.render(
+        "Score : " + str(scoreValue), True, (255, 255, 255))
     screen.blit(score, (10, 10))
 
     for event in pygame.event.get():
@@ -124,14 +127,14 @@ while run:
             run = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                if playerX is 205:
+                if playerX == 205:
                     playerX = 20
-                elif playerX is 405:
+                elif playerX == 405:
                     playerX = 205
             if event.key == pygame.K_RIGHT:
-                if playerX is 20:
+                if playerX == 20:
                     playerX = 205
-                elif playerX is 205:
+                elif playerX == 205:
                     playerX = 405
 
     playerPosition(playerX, playerY)
@@ -161,7 +164,7 @@ while run:
         del negArray[p:len(negArray)]
 
     if len(array) < vehiclesOnScreen:
-        if len(array) is 0:
+        if len(array) == 0:
             addVehicle()
         elif checkOverwrite() is False:
             addVehicle()
@@ -173,11 +176,13 @@ while run:
         carPosition(carX[i], carY[i], i)
 
         if i != 4:
-            if (playerX == carX[i]) and ((playerY < (carY[i] + 115)) and (playerY > (carY[i] - 115))):  # resizing required
+            # resizing required
+            if (playerX == carX[i]) and ((playerY < (carY[i] + 115)) and (playerY > (carY[i] - 115))):
                 crash()
                 run = False
                 break
-        elif ((playerX + 30) == carX[i]) and ((playerY < (carY[i] + 60)) and (playerY > (carY[i] - 60))):  # resizing required
+        # resizing required
+        elif ((playerX + 30) == carX[i]) and ((playerY < (carY[i] + 60)) and (playerY > (carY[i] - 60))):
             scoreValue += 10
             progress()
             carY[i] = 0
